@@ -18,9 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
 
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $token = str_replace('Bearer ', '', $_SERVER['HTTP_AUTHORIZATION']);
-    
+    // Add this before the try block
+echo "Authorization Header: " . $_SERVER['HTTP_AUTHORIZATION'] . "<br>";
     try {
-        $secretKey = '54(GsRS45'; // Replace with your actual secret key
+        $secretKey = '54GsRS45'; // Replace with your actual secret key
         $decodedToken = JWT::decode($token, $secretKey, ['HS256']);
 
         $userId = $decodedToken->user_id;
@@ -40,6 +41,8 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     } catch (Exception $e) {
         http_response_code(401);
         echo json_encode(["message" => "Unauthorized - Token Validation Failed", "error" => $e->getMessage()]);
+        // Add this inside the catch block
+echo "Exception: " . $e->getMessage() . "<br>";
     }
 } else {
     http_response_code(401);

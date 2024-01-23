@@ -1,6 +1,6 @@
 <?php
 // Enable CORS
-header("Access-Control-Allow-Origin: http://localhost:3000"); // Adjust the origin as needed
+header("Access-Control-Allow-Origin: http://localhost:3000"); 
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 // Include necessary files and initialize the session
@@ -11,8 +11,8 @@ use \Firebase\JWT\JWT;
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get username and password from the form
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
     // Perform basic validation
     if (empty($username) || empty($password)) {
@@ -34,8 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Verify the password
         if ($stmt->fetch() && password_verify($password, $hashedPassword)) {
             // Password is correct, create a session and set user data
-            $_SESSION["user_id"] = $id;
-            $_SESSION["username"] = $username;
 
             // Generate a JWT token
             $tokenPayload = array(
@@ -44,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Add additional claims as needed
             );
 
-            $secretKey = '54(GsRS45'; // Replace with your actual secret key
+            $secretKey = '54GsRS45'; // Replace with your actual secret key
             $token = JWT::encode($tokenPayload, $secretKey, 'HS256');
 
             // Return the JWT token in the response
